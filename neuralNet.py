@@ -16,50 +16,58 @@ cartPosition = cartVelocity = pendulumAngle = angularSpeed = 0
 
 #this is an arbitrary number, can be tweaked
 hidden_layer_size = 16
+#print every test_num values during the training phase
+test_num = 100
 
 #import test data
 dth_data = []
 th_data = []
 x_data = []
 dx_data = []
-#putting this here just in case, do not think that we need this (at least for the inputs)
 F_data = []
 
 with open("dth_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
-    for x in reader:
-        dth_data += x
+    for row in reader:
+        for value in row:
+            #print(value)
+            dth_data.append(float(value))
 #print(dth_data)
 
 with open("th_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
-    for x in reader:
-        th_data += x
+    for row in reader:
+        for value in row:
+            th_data.append(float(value))
       
 with open("dx_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
-    for x in reader:
-        dx_data += x
+    for row in reader:
+        for value in row:
+            dx_data.append(float(value))
 
 with open("x_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
-    for x in reader:
-        x_data += x
+    for row in reader:
+        for value in row:
+            x_data.append(float(value))
 
 with open("F_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
-    for x in reader:
-        F_data += x
+    for row in reader:
+        for value in row:
+            F_data.append(float(value))
 
 
 ################## REPRESENTATION #######################
 #create tensor for inputs
-tensorList = [[cartPosition, cartVelocity, pendulumAngle, angularSpeed]]
-for i in range(x_data.size()):
+tensorList = []
+for i in range(len(x_data)):
     temp = [x_data[i], dx_data[i], th_data[i], dth_data[i]]
-    tensorList += temp
-inputs = torch.tensor(tensorList, dType = torch.float32)
-targetVals = torch.tensor(F_data, dType = torch.float32)
+    tensorList.append(temp)
+#print(tensorList)
+inputs = torch.tensor(tensorList, dtype = torch.float32)
+targetVals = torch.tensor(F_data, dtype = torch.float32)
 
 class cartNN(nn.Module):
   def __init__(self, hiddenSize):
@@ -68,23 +76,24 @@ class cartNN(nn.Module):
     self.outputLayer = nn.Linear(hiddenSize, 1)
   def forward(self, f):
     #use ReLU on the first hidden layer
-    f = F.relu(self.hiddenLayer1(x))
+    f = F.relu(self.hiddenLayer1(f))
     f = self.outputLayer(f)
     return f
   
 #instantiation
-cartModel = cartNN(hiddenLayerSize)
+cartModel = cartNN(hidden_layer_size)
 
 #create loss function and optimization function
 #use mean squared error for regression
 loss_function = nn.MSELoss()
-optimization = optim.SGD(model.parameters(), lr = 0.01)
+optimization = optim.SGD(cartModel.parameters(), lr = 0.01)
 
 ################## OPTIMIZATION #########################
-#also known as epochs (idk why)
-iterations = 100*101
+#also known as epochs
+epochs = 100*101
 
-for x in range(iterations):
+#neural network training arc
+for x in range(epochs):
     #clear gradients
     optimization.zero_grad()
     #forward pass
@@ -95,16 +104,16 @@ for x in range(iterations):
     #update weights!
     optimization.step()
 
-    #Show one out of every 50 values to test
-    if(x + 1) % 50 == 0:
-        print("Epoch [{x + 1}/{iterations}], Loss: {loss.item().4f}")
+    #Show one out of every test_num values to test
+    if(x + 1) % test_num == 0:
+        print("Epoch [", (x + 1)/(epochs), "], Loss: ", loss.item())
 
 #Evaluation time!
 #disabling gradient tracking, to save on much needed computing power
 with torch.no_grad():
     #picking a random set of values from tensorList to test the neural network
     testValue = 100;
-    testTensor = torch.tensor([tensorList[testValue]])
+    testTensor = torch.tensor([tensorList[testValue]], dtype = torch.float32)
     #neural network's prediction of what the force should be
     forceOutput = cartModel(testTensor)
     print("Calculated force: ", forceOutput)
