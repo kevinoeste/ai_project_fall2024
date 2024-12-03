@@ -7,11 +7,6 @@ import csv
 
 ################## INITIALIZATION #######################
 
-#define directions
-#tensors that only have a single value are scalars
-forwards = 1
-backwards = -1
-
 #The four states that we need to control:
 #X position of cart
 #Velocity of cart
@@ -51,10 +46,20 @@ with open("x_data.csv", "r") as f:
     for x in reader:
         x_data += x
 
+with open("F_data.csv", "r") as f:
+    reader = csv.reader(f, delimiter = ",")
+    for x in reader:
+        F_data += x
+
 
 ################## REPRESENTATION #######################
 #create tensor for inputs
-inputs = torch.tensor([[cartPosition, cartVelocity, pendulumAngle, angularSpeed]], dType = torch.float32)
+tensorList = [[cartPosition, cartVelocity, pendulumAngle, angularSpeed]]
+for i in range(x_data.size()):
+    temp = [x_data[i], dx_data[i], th_data[i], dth_data[i]]
+    tensorList += temp
+inputs = torch.tensor(tensorList, dType = torch.float32)
+targetVals = torch.tensor(F_data, dType = torch.float32)
 
 class cartNN(nn.Module):
   def __init__(self, hiddenSize):
@@ -75,9 +80,8 @@ cartModel = cartNN(hiddenLayerSize)
 loss = nn.MSELoss()
 optimization = optim.SGD(model.parameters(), lr = 0.01)
 
-
 ################## OPTIMIZATION #########################
-#also known as epochs
+#also known as epochs (idk why)
 iterations = 100*101
 
 for x in range(iterations):
