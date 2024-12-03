@@ -23,7 +23,7 @@ hidden_layer_size = 16
 
 ################## REPRESENTATION #######################
 #create tensor for inputs
-inputs = torch.tensor([[cartPosition, cartVelocity, pendulumAngle, angularSpeed]])
+inputs = torch.tensor([[cartPosition, cartVelocity, pendulumAngle, angularSpeed]], dType = torch.float32)
 
 class cartNN(nn.Module):
   def __init__(self, hiddenSize):
@@ -43,4 +43,11 @@ cartModel = cartNN(hiddenLayerSize)
 #use mean squared error for regression
 loss = nn.MSELoss()
 optimization = optim.SGD(model.parameters(), lr = 0.01)
+
+
 ################## OPTIMIZATION #########################
+#also known as epochs
+iterations = 100*101
+
+for x in range(iterations):
+  
