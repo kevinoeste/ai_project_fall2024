@@ -24,7 +24,7 @@ dth_data = []
 th_data = []
 x_data = []
 dx_data = []
-F_data = []
+force_data = []
 
 with open("dth_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
@@ -56,7 +56,7 @@ with open("F_data.csv", "r") as f:
     reader = csv.reader(f, delimiter = ",")
     for row in reader:
         for value in row:
-            F_data.append(float(value))
+            force_data.append(float(value))
 
 
 ################## REPRESENTATION #######################
@@ -67,7 +67,7 @@ for i in range(len(x_data)):
     tensorList.append(temp)
 #print(tensorList)
 inputs = torch.tensor(tensorList, dtype = torch.float32)
-targetVals = torch.tensor(F_data, dtype = torch.float32)
+targetVals = torch.tensor(force_data, dtype = torch.float32)
 
 class cartNN(nn.Module):
   def __init__(self, hiddenSize):
