@@ -3,6 +3,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
 import torch.nn.functional as F
+import csv
 
 ################## INITIALIZATION #######################
 
@@ -16,9 +17,39 @@ backwards = -1
 #Velocity of cart
 #angle of pendulum
 #angular speed of pendulum
+cartPosition = cartVelocity = pendulumAngle = angularSpeed = 0
 
 #this is an arbitrary number, can be tweaked
 hidden_layer_size = 16
+
+#import test data
+dth_data = []
+th_data = []
+x_data = []
+dx_data = []
+#putting this here just in case, do not think that we need this (at least for the inputs)
+F_data = []
+
+with open("dth_data.csv", "r") as f:
+    reader = csv.reader(f, delimiter = ",")
+    for x in reader:
+        dth_data += x
+#print(dth_data)
+
+with open("th_data.csv", "r") as f:
+    reader = csv.reader(f, delimiter = ",")
+    for x in reader:
+        th_data += x
+      
+with open("dx_data.csv", "r") as f:
+    reader = csv.reader(f, delimiter = ",")
+    for x in reader:
+        dx_data += x
+
+with open("x_data.csv", "r") as f:
+    reader = csv.reader(f, delimiter = ",")
+    for x in reader:
+        x_data += x
 
 
 ################## REPRESENTATION #######################
@@ -50,4 +81,5 @@ optimization = optim.SGD(model.parameters(), lr = 0.01)
 iterations = 100*101
 
 for x in range(iterations):
-  
+  optimization.zero_grad()
+  outputs = model(
