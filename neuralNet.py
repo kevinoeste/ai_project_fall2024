@@ -15,11 +15,7 @@ backwards = -1
 #angle of pendulum
 #angular speed of pendulum
 
-#define default states
-cartPosition = 0
-cartVelocity = 0
-pendulumAngle = 0
-angularSpeed = 0
+
 
 
 
@@ -30,14 +26,12 @@ inputs = torch.tensor([[cartPosition, cartVelocity, pendulumAngle, angularSpeed]
 class cartNN(nn.Module):
   def __init__(self):
     super().__init__()
-    self.flatten = nn.Flatten()
-    self.linear_relu_stack_x = nn.Sequential(
-      nn.Linear(100*101, 8192),
-      nn.ReLU(),
-      nn.Linear(8192, 8192),
-      nn.ReLU(),
-      nn.Linear(8192, 1),
-    )
+    #define default states
+    self.cartPosition = 0
+    self.cartVelocity = 0
+    self.pendulumAngle = 0
+    self.angularSpeed = 0
+    self.force = 0
 
 
 
