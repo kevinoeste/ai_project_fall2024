@@ -34,7 +34,7 @@ class cartNN(nn.Module):
     self.linear_relu_stack_x = nn.Sequential(
       nn.Linear(100*101, 8192),
       nn.ReLU(),
-      nn.linear(8192, 8192),
+      nn.Linear(8192, 8192),
       nn.ReLU(),
       nn.Linear(8192, 1),
     )
