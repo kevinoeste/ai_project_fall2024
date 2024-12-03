@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+import torch.optim as optim
 import torch.nn.functional as F
 
 ################## INITIALIZATION #######################
@@ -16,10 +17,9 @@ backwards = -1
 #angle of pendulum
 #angular speed of pendulum
 
-num_inputs = 4
-#this is an arbitrary number
+#this is an arbitrary number, can be tweaked
 hidden_layer_size = 16
-num_outputs = 1
+
 
 ################## REPRESENTATION #######################
 #create tensor for inputs
@@ -36,7 +36,11 @@ class cartNN(nn.Module):
     f = self.outputLayer(f)
     return f
   
+#instantiation
+cartModel = cartNN(hiddenLayerSize)
 
-
-
+#create loss function and optimization function
+#use mean squared error for regression
+loss = nn.MSELoss()
+optimization = optim.SGD(model.parameters(), lr = 0.01)
 ################## OPTIMIZATION #########################
