@@ -77,7 +77,7 @@ cartModel = cartNN(hiddenLayerSize)
 
 #create loss function and optimization function
 #use mean squared error for regression
-loss = nn.MSELoss()
+loss_function = nn.MSELoss()
 optimization = optim.SGD(model.parameters(), lr = 0.01)
 
 ################## OPTIMIZATION #########################
@@ -85,5 +85,27 @@ optimization = optim.SGD(model.parameters(), lr = 0.01)
 iterations = 100*101
 
 for x in range(iterations):
-  optimization.zero_grad()
-  outputs = model(
+    #clear gradients
+    optimization.zero_grad()
+    #forward pass
+    outputs = cartModel(inputs)
+    loss = loss_function(outputs, targetVals)
+    #backwards pass/ back prop
+    loss.backward()
+    #update weights!
+    optimization.step()
+
+    #Show one out of every 50 values to test
+    if(x + 1) % 50 == 0:
+        print("Epoch [{x + 1}/{iterations}], Loss: {loss.item().4f}")
+
+#Evaluation time!
+#disabling gradient tracking, to save on much needed computing power
+with torch.no_grad():
+    #picking a random set of values from tensorList to test the neural network
+    testValue = 100;
+    testTensor = torch.tensor([tensorList[testValue]])
+    #neural network's prediction of what the force should be
+    forceOutput = cartModel(testTensor)
+    print("Calculated force: ", forceOutput)
+    
