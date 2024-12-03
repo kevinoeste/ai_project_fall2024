@@ -24,14 +24,21 @@ backwards = -1
 inputs = torch.tensor([[cartPosition, cartVelocity, pendulumAngle, angularSpeed]])
 
 class cartNN(nn.Module):
-  def __init__(self):
-    super().__init__()
+  def __init__(self, hiddenSize):
+    super(cartNN, self).__init__()
     #define default states
-    self.cartPosition = 0
-    self.cartVelocity = 0
-    self.pendulumAngle = 0
-    self.angularSpeed = 0
-    self.force = 0
+    #not sure if I'm gonna need these or not, nothing I see online has variables like this in the default constructor
+    #self.cartPosition = 0
+    #self.cartVelocity = 0
+    #self.pendulumAngle = 0
+    #self.angularSpeed = 0
+    #self.force = 0
+    self.hiddenLayer1 = nn.Linear(4, hiddenSize)
+    self.outputLayer = nn.Linear(hiddenSize, 1)
+  def forward(self, f):
+    f = self.flatten(f)
+    logits = self.linear_relu_stack(f)
+    return logits
 
 
 
